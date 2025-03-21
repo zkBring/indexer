@@ -1,0 +1,5 @@
+{
+  "DROP_NOT_FOUND": { "warn": true },
+  "UNAUTHORIZED_REQUEST": { "warn": true },
+  "API_SECRET_KEY_NOT_PROVIDED": { "warn": true }
+}

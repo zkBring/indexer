@@ -1,0 +1,30 @@
+{
+  "name": "zkbring-indexer",
+  "version": "1.0.0",
+  "main": "server.js",
+  "author": "ol <ol@zkbring.com>",
+  "engines": {
+    "node": "18.x"
+  },
+  "scripts": {
+    "dev": "NODE_ENV=development nodemon server.js",
+    "start": "node --max-old-space-size=4096 server.js"
+  },
+  "dependencies": {
+    "cli-table": "^0.3.11",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.0",
+    "express": "^4.18.1",
+    "express-async-handler": "^1.2.0",
+    "morgan": "^1.10.0",
+    "pg": "^8.14.1",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.37.6",
+    "winston": "^3.7.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1",
+    "standard": "^17.1.0"
+  }
+}
