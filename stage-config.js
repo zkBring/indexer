@@ -1,7 +1,6 @@
 const dotenv = require('dotenv')
 const path = require('path')
 const version = require('./package.json').version
-process.env.DD_GIT_COMMIT_SHA = process.env.HEROKU_SLUG_COMMIT
 
 dotenv.config({
   path: path.resolve(__dirname, `${process.env.NODE_ENV}.env`)
