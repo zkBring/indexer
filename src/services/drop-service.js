@@ -3,7 +3,7 @@ const { Drop } = require('../models')
 class DropService {
   async findByAddress (dropAddress) {
     return await Drop.findOne({ 
-      where: { drop_address: dropAddress } 
+      where: { drop_address: dropAddress.toLowerCase() } 
     })
   }
 
