@@ -6,10 +6,10 @@ Drop.init(
   {
     id: {
       type: DataTypes.STRING,
-      primaryKey: true,
     },
     drop_address: {
       type: DataTypes.STRING,
+      primaryKey: true
     },
     factory_address: {
       type: DataTypes.STRING,
@@ -38,7 +38,7 @@ Drop.init(
     status: {
       type: DataTypes.STRING,
     },
-    created_at: {
+    block_timestamp: {
       type: DataTypes.DATE,
     }
   },
@@ -48,7 +48,7 @@ Drop.init(
     tableName: 'drops',
     schema: 'events',
     timestamps: false
-  },
+  }
 )
 
 module.exports = Drop

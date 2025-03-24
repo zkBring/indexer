@@ -20,7 +20,8 @@ const getAllDrops = async (req, res) => {
 const getDropByAddress = async (req, res) => {
   logger.json({ controller: 'drop-controller', method: 'getDropByAddress' })
   const dropAddress = req.params.drop_address
-  const drop = await dropService.findByAddress(dropAddress)
+  const fetcherAddress = req.query.fetch_as
+  const drop = await dropService.getDrop({ dropAddress, fetcherAddress })
 
   res.json({
     success: true,
