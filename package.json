@@ -4,13 +4,14 @@
   "main": "server.js",
   "author": "ol <ol@zkbring.com>",
   "engines": {
-    "node": "18.x"
+    "node": "20.x"
   },
   "scripts": {
     "dev": "NODE_ENV=development nodemon server.js",
     "start": "node --max-old-space-size=4096 server.js"
   },
   "dependencies": {
+    "celebrate": "^15.0.3",
     "cli-table": "^0.3.11",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -20,6 +21,7 @@
     "morgan": "^1.10.0",
     "pg": "^8.14.1",
     "pg-hstore": "^2.3.4",
+    "pinata": "^2.1.0",
     "sequelize": "^6.37.6",
     "winston": "^3.7.2"
   },

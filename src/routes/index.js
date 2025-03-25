@@ -1,5 +1,6 @@
 const express = require('express')
 const asyncHandler = require('express-async-handler')
+const { celebrateMiddleware } = require('../utils/celebrate-builder')
 
 const constructRouter = routesPath => {
   const apiRouter = express.Router()
@@ -14,6 +15,7 @@ const constructRouter = routesPath => {
         throw new Error(def.method + ' is undefined')
       }
       const middleware = []
+      if (def.celebrateSchema) middleware.push(asyncHandler(celebrateMiddleware(def.celebrateSchema)))
       middleware.push(asyncHandler(method))
       apiRouter[verb](url, middleware)
     }
