@@ -1,6 +1,6 @@
 const logger = require('../utils/logger')
 const dropService = require('../services/drop-service')
-
+const claimerService = require('../services/claimer-service')
 const getAllDrops = async (req, res) => {
   logger.json({ controller: 'drop-controller', method: 'getAllDrops' })
   const {
@@ -20,7 +20,8 @@ const getAllDrops = async (req, res) => {
 const getDropByAddress = async (req, res) => {
   logger.json({ controller: 'drop-controller', method: 'getDropByAddress' })
   const dropAddress = req.params.drop_address
-  const drop = await dropService.findByAddress(dropAddress)
+  const fetcherAddress = req.query.fetch_as
+  const drop = await dropService.getDrop({ dropAddress, fetcherAddress })
 
   res.json({
     success: true,
@@ -28,7 +29,28 @@ const getDropByAddress = async (req, res) => {
   })
 }
 
+const getDropClaimer = async (req, res) => {
+  logger.json({ controller: 'drop-controller', method: 'getDropClaimer' })
+  const dropAddress = req.params.drop_address
+  const claimerAddress = req.params.claimer_address
+
+  const {
+    account_address, 
+    claimed, 
+    claim_tx_hash
+  } = await claimerService.getClaimer({ dropAddress, claimerAddress })
+
+  res.json({
+    success: true,
+    account_address,
+    claimed,
+    claim_tx_hash
+  })
+}
+
+
 module.exports = {
   getAllDrops,
+  getDropClaimer,
   getDropByAddress
 }
