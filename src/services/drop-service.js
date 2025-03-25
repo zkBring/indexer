@@ -1,41 +1,40 @@
 const { Drop, Claim } = require('../models')
 
 class DropService {
-  async findByAddress (dropAddress) {
-    return await Drop.findOne({ 
-      where: { drop_address: dropAddress.toLowerCase() } 
+  async findDropWithClaim (dropAddress, claimerAddress) {
+    return await Drop.findOne({
+      where: { drop_address: dropAddress },
+      include: claimerAddress ? [{
+        model: Claim,
+        required: false,
+        attributes: ['recipient_address', 'claim_tx_hash'],
+        where: { recipient_address: claimerAddress.toLowerCase() }
+      }] : []
     })
   }
 
   async getDrop ({ dropAddress, fetcherAddress }) {
-    let drop = await Drop.findOne({
-      where: { drop_address: dropAddress },
-      include: fetcherAddress ? [{
-        model: Claim,
-        required: false,
-        attributes: ['recipient_address', 'claim_tx_hash'],
-        where: { recipient_address: fetcherAddress.toLowerCase() }
-      }] : []
-    })
-
+    let drop = await this.findDropWithClaim(dropAddress, fetcherAddress)
     if (!drop) return null
-    drop = drop.toJSON()
-    if (drop.Claims && drop.Claims.length > 0) {
-      const claim = drop.Claims[0]
-      drop.fetcher_data = {
-        account_address: claim.recipient_address,
-        claimed: true,
-        claim_tx_hash: claim.claim_tx_hash
-      }
-    } else {
-      drop.fetcher_data = {
-        account_address: fetcherAddress.toLowerCase(),
-        claimed: false,
-        claim_tx_hash: null
-      }
-    }
 
-    delete drop.Claims
+    drop = drop.toJSON()
+    if (fetcherAddress) {      
+      if (drop.Claims && drop.Claims.length > 0) {
+        const claim = drop.Claims[0]
+        drop.fetcher_data = {
+          account_address: claim.recipient_address,
+          claimed: true,
+          claim_tx_hash: claim.claim_tx_hash
+        }
+      } else {
+        drop.fetcher_data = {
+          account_address: fetcherAddress.toLowerCase(),
+          claimed: false,
+          claim_tx_hash: null
+        }
+      }
+      delete drop.Claims
+    }
 
     return drop
   }

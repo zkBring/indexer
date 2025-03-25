@@ -18,7 +18,7 @@ Claim.init(
     claim_tx_hash: {
       type: DataTypes.STRING,
     },
-    event_timestamp: {
+    block_timestamp: {
       type: DataTypes.DATE,
     },
   },
