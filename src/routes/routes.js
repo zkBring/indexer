@@ -16,6 +16,13 @@ const routes = {
       controller: 'drop-controller',
       method: 'getDropClaimer'
     }
+  },
+  '/upload-drop-metadata': {
+    post: {
+      controller: 'drop-controller',
+      method: 'uploadDropMetadata',
+      celebrateSchema: 'uploadDropMetadata'
+    }
   }
 }
 

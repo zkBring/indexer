@@ -7,6 +7,7 @@ const {sequelize} = require('./src/models')
 const buildRouter = require('./src/routes')
 const logger = require('./src/utils/logger')
 const cookieParser = require('cookie-parser')
+const { isCelebrateError } = require('celebrate')
 const asyncHandler = require('express-async-handler')
 const errorToWarn = require('./configs/error-to-warn.json')
 const { requestValidator } = require('./src/utils/request-validator')
@@ -50,7 +51,24 @@ app.get('/', (req, res) => res.send('👋 Hello from zkbring indexer'))
 
 // Error handling middleware
 app.use((error, req, res, next) => {
-  if (error.isOperational) {
+  if (isCelebrateError(error)) {
+    const errorNames = []
+    error.details.forEach(
+      value => value.details.forEach(
+        detail => errorNames.push(detail.message)))
+    logger.warn({
+      message: 'Request params validation error.',
+      errorNames
+    })
+    logger.warn(error.stack)
+
+    res.status(400)
+    res.send({
+      success: false,
+      error: 'Validation error',
+      errors: errorNames
+    })
+  } else if (error.isOperational) {
     const shouldWarn = errorToWarn[error.cause]?.warn
     const isSilenced = errorToWarn[error.cause]?.silence
 

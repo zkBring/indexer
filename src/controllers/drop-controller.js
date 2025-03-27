@@ -1,6 +1,7 @@
 const logger = require('../utils/logger')
 const dropService = require('../services/drop-service')
 const claimerService = require('../services/claimer-service')
+
 const getAllDrops = async (req, res) => {
   logger.json({ controller: 'drop-controller', method: 'getAllDrops' })
   const {
@@ -48,9 +49,24 @@ const getDropClaimer = async (req, res) => {
   })
 }
 
+const uploadDropMetadata = async (req, res) => {
+  logger.json({ controller: 'drop-controller', method: 'uploadDropMetadata' })
+  const { 
+    title, 
+    description
+ } = req.body
+
+  const metadataIpfsHash = await dropService.uploadDropMetadata({ title, description })
+
+  res.json({
+    success: true,
+    metadataIpfsHash
+  })
+}
 
 module.exports = {
   getAllDrops,
   getDropClaimer,
-  getDropByAddress
+  getDropByAddress,
+  uploadDropMetadata
 }
