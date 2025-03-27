@@ -19,9 +19,15 @@ const routes = {
   },
   '/upload-drop-metadata': {
     post: {
-      controller: 'drop-controller',
+      controller: 'ipfs-controller',
       method: 'uploadDropMetadata',
       celebrateSchema: 'uploadDropMetadata'
+    }
+  },
+  '/get-drop-title-and-description': {
+    post: {
+      controller: 'ipfs-controller',
+      method: 'getDropTitleAndDescription'
     }
   }
 }

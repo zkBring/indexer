@@ -1,5 +1,4 @@
 const { Drop, Claim } = require('../models')
-const pinata = require('../utils/pinata-client')
 
 class DropService {
   async findDropWithClaim (dropAddress, claimerAddress) {
@@ -63,17 +62,6 @@ class DropService {
         count: drops.length
       }
     }
-  }
-
-  async uploadDropMetadata ({ title, description }) {
-    const metadata = {
-      title,
-      description 
-    }
-
-    const { cid } = await pinata.upload.public.json(metadata).name(`${title}.json`)
-
-    return cid
   }
 }
 
