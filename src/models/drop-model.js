@@ -24,7 +24,7 @@ Drop.init(
       type: DataTypes.STRING,
     },
     amount: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
     },
     expiration: {
       type: DataTypes.INTEGER,

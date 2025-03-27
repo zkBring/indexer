@@ -27,7 +27,8 @@ const routes = {
   '/get-drop-title-and-description': {
     post: {
       controller: 'ipfs-controller',
-      method: 'getDropTitleAndDescription'
+      method: 'getDropTitleAndDescription',
+      celebrateSchema: 'getDropTitleAndDescription'
     }
   }
 }
