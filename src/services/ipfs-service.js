@@ -1,6 +1,7 @@
 const { PinataSDK } = require('pinata')
 const stageConfig = require('../../stage-config')
 const logger = require('../utils/logger')
+
 class IpfsService {
   constructor() {
     this.pinata = new PinataSDK({

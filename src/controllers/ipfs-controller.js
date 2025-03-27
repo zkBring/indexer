@@ -32,7 +32,7 @@ const getDropTitleAndDescription = async (req, res) => {
     status,
     block_timestamp
   } = req.body
-
+  
   const {
     title, 
     description
