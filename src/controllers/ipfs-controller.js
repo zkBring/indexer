@@ -19,15 +19,17 @@ const uploadDropMetadata = async (req, res) => {
 const getDropTitleAndDescription = async (req, res) => {
   logger.json({ controller: 'metadata-controller', method: 'getDropTitleAndDescription' })
   const {
-    drop, 
-    factory_address, 
-    token, 
-    creator, 
-    zk_pass_schema_id, 
-    amount, 
-    expiration, 
-    max_claims, 
-    metadata_ipfs_hash, 
+    id,
+    drop_address,
+    factory_address,
+    token_address,
+    creator_address,
+    zk_pass_schema_id,
+    amount,
+    expiration,
+    max_claims,
+    metadata_ipfs_hash,
+    status,
     block_timestamp
   } = req.body
 
@@ -38,15 +40,17 @@ const getDropTitleAndDescription = async (req, res) => {
 
   res.json({
     success: true,
-    drop,
+    id,
+    drop_address,
     factory_address,
-    token,
-    creator,
+    token_address,
+    creator_address,
     zk_pass_schema_id,
     amount,
     expiration,
     max_claims,
     metadata_ipfs_hash,
+    status,
     block_timestamp,
     title,
     description

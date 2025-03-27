@@ -21,33 +21,41 @@ const celebrateMiddleware = celebrateSchema => {
   if (celebrateSchema === 'getDropTitleAndDescription') {
     return celebrate({
       [Segments.BODY]: Joi.object().keys({
-        drop: Joi.string().required().messages({
-          'string.base': 'DROP_WRONG_TYPE',
-          'string.empty': 'DROP_REQUIRED',
-          'any.required': 'DROP_REQUIRED',
+        id: Joi.string().required().messages({
+          'string.base': 'ID_WRONG_TYPE',
+          'string.empty': 'ID_REQUIRED',
+          'any.required': 'ID_REQUIRED',
+        }),
+        drop_address: Joi.string().required().messages({
+          'string.base': 'DROP_ADDRESS_WRONG_TYPE',
+          'string.empty': 'DROP_ADDRESS_REQUIRED',
+          'any.required': 'DROP_ADDRESS_REQUIRED',
         }),
         factory_address: Joi.string().required().messages({
           'string.base': 'FACTORY_ADDRESS_WRONG_TYPE',
           'string.empty': 'FACTORY_ADDRESS_REQUIRED',
           'any.required': 'FACTORY_ADDRESS_REQUIRED',
         }),
-        token: Joi.string().required().messages({
-          'string.base': 'TOKEN_WRONG_TYPE',
-          'string.empty': 'TOKEN_REQUIRED',
-          'any.required': 'TOKEN_REQUIRED',
+        token_address: Joi.string().required().messages({
+          'string.base': 'TOKEN_ADDRESS_WRONG_TYPE',
+          'string.empty': 'TOKEN_ADDRESS_REQUIRED',
+          'any.required': 'TOKEN_ADDRESS_REQUIRED',
         }),
-        creator: Joi.string().required().messages({
-          'string.base': 'CREATOR_WRONG_TYPE',
-          'string.empty': 'CREATOR_REQUIRED',
-          'any.required': 'CREATOR_REQUIRED',
+        creator_address: Joi.string().required().messages({
+          'string.base': 'CREATOR_ADDRESS_WRONG_TYPE',
+          'string.empty': 'CREATOR_ADDRESS_REQUIRED',
+          'any.required': 'CREATOR_ADDRESS_REQUIRED',
         }),
         zk_pass_schema_id: Joi.string().required().messages({
           'string.base': 'ZK_PASS_SCHEMA_ID_WRONG_TYPE',
           'string.empty': 'ZK_PASS_SCHEMA_ID_REQUIRED',
           'any.required': 'ZK_PASS_SCHEMA_ID_REQUIRED',
         }),
-        amount: Joi.string().required().messages({
-          'string.base': 'AMOUNT_WRONG_TYPE',
+        amount: Joi.alternatives().try(
+          Joi.string(),
+          Joi.number()
+        ).required().messages({
+          'alternatives.match': 'AMOUNT_WRONG_TYPE',
           'string.empty': 'AMOUNT_REQUIRED',
           'any.required': 'AMOUNT_REQUIRED',
         }),
@@ -65,6 +73,11 @@ const celebrateMiddleware = celebrateSchema => {
           'string.base': 'METADATA_IPFS_HASH_WRONG_TYPE',
           'string.empty': 'METADATA_IPFS_HASH_REQUIRED',
           'any.required': 'METADATA_IPFS_HASH_REQUIRED',
+        }),
+        status: Joi.string().required().messages({
+          'string.base': 'STATUS_WRONG_TYPE',
+          'string.empty': 'STATUS_REQUIRED',
+          'any.required': 'STATUS_REQUIRED',
         }),
         block_timestamp: Joi.number().required().messages({
           'number.base': 'BLOCK_TIMESTAMP_WRONG_TYPE',
