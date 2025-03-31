@@ -10,6 +10,7 @@ const cookieParser = require('cookie-parser')
 const { isCelebrateError } = require('celebrate')
 const asyncHandler = require('express-async-handler')
 const errorToWarn = require('./configs/error-to-warn.json')
+const { dbListenerService } = require('./src/services')
 const { requestValidator } = require('./src/utils/request-validator')
 const config = require(`./configs/${stageConfig.NODE_ENV}.config`)
 
@@ -33,8 +34,12 @@ app.use(
 
 // connect to database
 sequelize.authenticate()
-  .then(() => {
+  .then(async () => {
     logger.info('Connected to DB')
+
+    await dbListenerService.startListening()
+    logger.info('Database listener started')
+
     const PORT = stageConfig.PORT || 8000
     app.listen(PORT, () => logger.info(`Server is up on port ${PORT}`))
   })

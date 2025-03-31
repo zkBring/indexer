@@ -27,4 +27,4 @@ class ClaimerService {
   }
 }
 
-module.exports = new ClaimerService()
+module.exports = ClaimerService

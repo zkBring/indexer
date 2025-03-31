@@ -19,6 +19,4 @@ const celebrateMiddleware = celebrateSchema => {
   }
 }
 
-module.exports = {
-  celebrateMiddleware
-}
+module.exports = {celebrateMiddleware}

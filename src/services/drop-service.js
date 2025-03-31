@@ -1,7 +1,10 @@
 const { Drop, Claim } = require('../models')
-const pinata = require('../utils/pinata-client')
 
 class DropService {
+  constructor (ipfsService) {
+    this.ipfsService = ipfsService
+  }
+
   async findDropWithClaim (dropAddress, claimerAddress) {
     return await Drop.findOne({
       where: { drop_address: dropAddress },
@@ -65,16 +68,27 @@ class DropService {
     }
   }
 
-  async uploadDropMetadata ({ title, description }) {
-    const metadata = {
+  async updateDrop({ dropAddress, title, description }) {
+    const params = {
       title,
-      description 
+      description
     }
 
-    const { cid } = await pinata.upload.public.json(metadata).name(`${title}.json`)
+    const drop = await Drop.update(params, {
+      where: { drop_address: dropAddress },
+      returning: true
+    })
 
-    return cid
+    return drop
+  }
+
+  async setDropTitleAndDescription({ dropAddress, metadataIpfsHash }) {
+    const { 
+      title, 
+      description 
+    } = await this.ipfsService.getDropTitleAndDescription(metadataIpfsHash)
+    return await this.updateDrop({ dropAddress, title, description })
   }
 }
 
-module.exports = new DropService()
+module.exports = DropService
