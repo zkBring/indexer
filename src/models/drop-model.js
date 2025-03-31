@@ -53,7 +53,10 @@ Drop.init(
     modelName: 'Drop',
     tableName: 'drops',
     schema: 'events',
-    timestamps: false
+    timestamps: false,
+    defaultScope: {
+      attributes: { exclude: ['id'] }
+    }
   }
 )
 

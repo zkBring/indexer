@@ -27,7 +27,10 @@ Claim.init(
     modelName: 'Claim',
     tableName: 'claims',
     schema: 'events',
-    timestamps: false
+    timestamps: false,
+    defaultScope: {
+      attributes: { exclude: ['id'] }
+    }
   }
 )
 
