@@ -40,6 +40,12 @@ Drop.init(
     },
     block_timestamp: {
       type: DataTypes.DATE,
+    },
+    title: {
+      type: DataTypes.STRING,
+    },
+    description: {
+      type: DataTypes.STRING,
     }
   },
   {

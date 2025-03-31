@@ -1,6 +1,5 @@
 const logger = require('../utils/logger')
-const dropService = require('../services/drop-service')
-const claimerService = require('../services/claimer-service')
+const { dropService, claimerService } = require('../services/index')
 
 const getAllDrops = async (req, res) => {
   logger.json({ controller: 'drop-controller', method: 'getAllDrops' })

@@ -33,4 +33,4 @@ class IpfsService {
   }
 }
 
-module.exports = new IpfsService()
+module.exports = IpfsService

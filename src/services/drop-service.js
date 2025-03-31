@@ -1,6 +1,10 @@
 const { Drop, Claim } = require('../models')
 
 class DropService {
+  constructor (ipfsService) {
+    this.ipfsService = ipfsService
+  }
+
   async findDropWithClaim (dropAddress, claimerAddress) {
     return await Drop.findOne({
       where: { drop_address: dropAddress },
@@ -63,6 +67,28 @@ class DropService {
       }
     }
   }
+
+  async updateDrop({ dropAddress, title, description }) {
+    const params = {
+      title,
+      description
+    }
+
+    const drop = await Drop.update(params, {
+      where: { drop_address: dropAddress },
+      returning: true
+    })
+
+    return drop
+  }
+
+  async setDropTitleAndDescription({ dropAddress, metadataIpfsHash }) {
+    const { 
+      title, 
+      description 
+    } = await this.ipfsService.getDropTitleAndDescription(metadataIpfsHash)
+    return await this.updateDrop({ dropAddress, title, description })
+  }
 }
 
-module.exports = new DropService()
+module.exports = DropService
