@@ -5,10 +5,15 @@ const getAllDrops = async (req, res) => {
   logger.json({ controller: 'drop-controller', method: 'getAllDrops' })
   const {
     limit,
-    offset
+    offset,
+    creator_address: creatorAddress
   } = req.query
 
-  const result = await dropService.getAllActiveDrops(offset, limit)
+  const result = await dropService.getAllActiveDrops({
+    limit, 
+    offset, 
+    creatorAddress
+  })
 
   res.json({
     success: true,
