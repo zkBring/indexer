@@ -43,19 +43,29 @@ class DropService {
     return drop
   }
 
-  async getAllActiveDrops (offset, limit) {
+  async getAllActiveDrops ({
+    limit,
+    offset, 
+    creatorAddress
+  }) {
     offset = Number(offset) || 0
     limit = Number(limit) || 10
 
+    const whereCondition = { status: 'active' }
+    
+    if (creatorAddress) {
+      whereCondition.creator_address = creatorAddress.toLowerCase()
+    }
+
     const drops = await Drop.findAll({ 
-      where: { status: 'active' },
+      where: whereCondition,
       order: [['block_timestamp', 'DESC']],
       offset,
       limit
     })
 
     const total = await Drop.count({ 
-      where: { status: 'active' } 
+      where: whereCondition 
     })
     
     return {
