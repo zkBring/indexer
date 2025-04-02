@@ -114,7 +114,7 @@ class DatabaseListenerService {
   }
 
   async handleNewDrop(payload) {
-    await this.dropService.setDropTitleAndDescription({
+    await this.dropService.updateTitleAndDescription({
       dropAddress: payload.drop_address,
       metadataIpfsHash: payload.metadata_ipfs_hash,
     });

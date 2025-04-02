@@ -24,7 +24,7 @@ Drop.init(
       type: DataTypes.STRING,
     },
     amount: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.BIGINT,
     },
     expiration: {
       type: DataTypes.INTEGER,
@@ -46,6 +46,9 @@ Drop.init(
     },
     description: {
       type: DataTypes.STRING,
+    },
+    total_staked: {
+      type: DataTypes.BIGINT,
     }
   },
   {

@@ -78,21 +78,37 @@ class DropService {
     }
   }
 
-  async updateDrop({ dropAddress, title, description }) {
+  async updateDrop({ 
+    title, 
+    status, 
+    dropAddress, 
+    description, 
+    totalStaked 
+  }) {
     const params = {
       title,
-      description
+      status,
+      description,
+      total_staked: totalStaked
     }
 
     const drop = await Drop.update(params, {
-      where: { drop_address: dropAddress },
+      where: { drop_address: dropAddress.toLowerCase() },
       returning: true
     })
 
     return drop
   }
 
-  async setDropTitleAndDescription({ dropAddress, metadataIpfsHash }) {
+  async updateStatus({ dropAddress, status }) {
+    return await this.updateDrop({ dropAddress, status })
+  }
+
+  async updateTotalStaked({ dropAddress, totalStaked }) {
+    return await this.updateDrop({ dropAddress, totalStaked })
+  }
+
+  async updateTitleAndDescription({ dropAddress, metadataIpfsHash }) {
     const { 
       title, 
       description 
