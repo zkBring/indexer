@@ -49,6 +49,10 @@ Drop.init(
     },
     total_staked: {
       type: DataTypes.BIGINT,
+    },
+    shadowbanned: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
     }
   },
   {
@@ -58,7 +62,7 @@ Drop.init(
     schema: 'events',
     timestamps: false,
     defaultScope: {
-      attributes: { exclude: ['id'] }
+      attributes: { exclude: ['id', 'shadowbanned'] }
     }
   }
 )
