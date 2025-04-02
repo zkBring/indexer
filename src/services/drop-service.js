@@ -1,4 +1,4 @@
-const { Drop, Claim } = require('../models')
+const { Drop, Claim, sequelize } = require('../models')
 
 class DropService {
   constructor (ipfsService) {
@@ -8,12 +8,14 @@ class DropService {
   async findDropWithClaim (dropAddress, claimerAddress) {
     return await Drop.findOne({
       where: { drop_address: dropAddress, shadowbanned: false },
-      include: claimerAddress ? [{
-        model: Claim,
-        required: false,
-        attributes: ['recipient_address', 'claim_tx_hash'],
-        where: { recipient_address: claimerAddress.toLowerCase() }
-      }] : []
+      include: [
+        {
+          model: Claim,
+          required: false,
+          attributes: ['recipient_address', 'claim_tx_hash'],
+          where: claimerAddress ? { recipient_address: claimerAddress.toLowerCase() } : {}
+        }
+      ]
     })
   }
 
@@ -22,6 +24,11 @@ class DropService {
     if (!drop) return null
 
     drop = drop.toJSON()
+    const claimsCount = await Claim.count({
+      where: { drop_address: dropAddress }
+    })
+    drop.claims_count = claimsCount
+
     if (fetcherAddress) {      
       if (drop.Claims && drop.Claims.length > 0) {
         const claim = drop.Claims[0]
@@ -39,33 +46,60 @@ class DropService {
       }
       delete drop.Claims
     }
-
+    
     return drop
   }
 
-  async getAllActiveDrops ({
+  async getAllActiveDrops({
     limit,
-    offset, 
+    offset,
     creatorAddress
   }) {
     offset = Number(offset) || 0
     limit = Number(limit) || 10
-
-    const whereCondition = { status: 'active', shadowbanned: false }
     
+    const whereCondition = { status: 'active', shadowbanned: false }
     if (creatorAddress) {
       whereCondition.creator_address = creatorAddress.toLowerCase()
     }
-
-    const drops = await Drop.findAll({ 
-      where: whereCondition,
-      order: [['block_timestamp', 'DESC']],
-      offset,
-      limit
+    
+    const total = await Drop.count({
+      where: whereCondition
     })
 
-    const total = await Drop.count({ 
-      where: whereCondition 
+    const drops = await Drop.findAll({
+      where: whereCondition,
+      attributes: {
+        include: [
+          [
+            sequelize.fn('COUNT', 
+              sequelize.where(
+                sequelize.col('Claims.drop_address'), 
+                '=', 
+                sequelize.col('Drop.drop_address')
+              )
+            ),
+            'claims_count'
+          ]
+        ]
+      },
+      include: [
+        {
+          model: Claim,
+          attributes: [],
+          required: false,
+          on: sequelize.where(
+            sequelize.col('Claims.drop_address'),
+            '=',
+            sequelize.col('Drop.drop_address')
+          )
+        }
+      ],
+      group: ['Drop.drop_address'],
+      order: [['block_timestamp', 'DESC']],
+      subQuery: false,
+      offset,
+      limit
     })
     
     return {
