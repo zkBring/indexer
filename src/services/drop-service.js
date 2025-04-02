@@ -7,7 +7,7 @@ class DropService {
 
   async findDropWithClaim (dropAddress, claimerAddress) {
     return await Drop.findOne({
-      where: { drop_address: dropAddress },
+      where: { drop_address: dropAddress, shadowbanned: false },
       include: claimerAddress ? [{
         model: Claim,
         required: false,
@@ -51,7 +51,7 @@ class DropService {
     offset = Number(offset) || 0
     limit = Number(limit) || 10
 
-    const whereCondition = { status: 'active' }
+    const whereCondition = { status: 'active', shadowbanned: false }
     
     if (creatorAddress) {
       whereCondition.creator_address = creatorAddress.toLowerCase()
