@@ -7,7 +7,7 @@ class DropService {
 
   async findDropWithClaim (dropAddress, claimerAddress) {
     return await Drop.findOne({
-      where: { drop_address: dropAddress },
+      where: { drop_address: dropAddress, shadowbanned: false },
       include: claimerAddress ? [{
         model: Claim,
         required: false,
