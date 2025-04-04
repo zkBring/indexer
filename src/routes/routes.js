@@ -2,7 +2,8 @@ const routes = {
   '/drops': {
     get: {
       controller: 'drop-controller',
-      method: 'getAllDrops'
+      method: 'getAllDrops',
+      celebrateSchema: 'getAllDrops'
     }
   },
   '/drops/:drop_address': {

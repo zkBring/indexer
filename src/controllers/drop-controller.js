@@ -6,12 +6,16 @@ const getAllDrops = async (req, res) => {
   const {
     limit,
     offset,
+    staked,
+    status,
     creator_address: creatorAddress
   } = req.query
 
   const result = await dropService.getAllActiveDrops({
     limit, 
-    offset, 
+    offset,
+    staked,
+    status,
     creatorAddress
   })
 

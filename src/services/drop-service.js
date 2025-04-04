@@ -54,19 +54,15 @@ class DropService {
   async getAllActiveDrops({
     limit,
     offset,
+    staked,
+    status,
     creatorAddress
   }) {
     offset = Number(offset) || 0
     limit = Number(limit) || 10
     
-    const whereCondition = { status: 'active', shadowbanned: false }
-    if (creatorAddress) {
-      whereCondition.creator_address = creatorAddress.toLowerCase()
-    } else {
-      const minimumStakedInWei = ethers.parseUnits(
-        stageConfig.MINIMUM_STAKED_BRING, 18).toString()
-      whereCondition.total_staked = { [Op.gte]: minimumStakedInWei }
-    }
+    const whereCondition = this
+      ._buildWhereCondition({ status, creatorAddress, staked })
     
     const total = await Drop.count({
       where: whereCondition
@@ -115,6 +111,20 @@ class DropService {
         count: drops.length
       }
     }
+  }
+
+  _buildWhereCondition({ status, creatorAddress, staked }) {
+    const whereCondition = { shadowbanned: false }
+
+    if (status) whereCondition.status = status
+    if (creatorAddress) whereCondition.creator_address = creatorAddress.toLowerCase()
+    if (staked) {
+      const minimumStakedInWei = ethers.parseUnits(
+        stageConfig.MINIMUM_STAKED_BRING, 18).toString()
+      whereCondition.total_staked = { [Op.gte]: minimumStakedInWei }
+    }
+    
+    return whereCondition
   }
 
   async updateDrop({ 
