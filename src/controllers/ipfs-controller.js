@@ -3,11 +3,11 @@ const { ipfsService } = require('../services/index')
 
 const uploadDropMetadata = async (req, res) => {
   logger.json({ controller: 'ipfs-controller', method: 'uploadDropMetadata' })
-  const { 
-    title, 
+  const {
+    title,
     description
-   } = req.body
-  
+  } = req.body
+
   const metadataIpfsHash = await ipfsService.uploadDropMetadata({ title, description })
 
   res.json({

@@ -1,29 +1,29 @@
-const { Client } = require("pg")
-const logger = require("../utils/logger")
+const { Client } = require('pg')
+const logger = require('../utils/logger')
 const { sequelize } = require('../models/index')
 const stageConfig = require('../../stage-config')
 
 class DatabaseListenerService {
-  constructor(dropService) {
+  constructor (dropService) {
     this.dropService = dropService
     this.client = null
   }
 
-  async startListening() {
+  async startListening () {
     try {
       await this.setupTriggers()
       await this.startDBListener()
     } catch (error) {
-      logger.error("Error starting database listener:", error)
+      logger.error('Error starting database listener:', error)
       this.reconnect()
     }
   }
 
-  async setupTriggers() {
+  async setupTriggers () {
     await this.setupNewDropTrigger()
   }
 
-  async setupNewDropTrigger() {
+  async setupNewDropTrigger () {
     try {
       await sequelize.query(`
         CREATE OR REPLACE FUNCTION events.notify_new_drop()
@@ -57,17 +57,17 @@ class DatabaseListenerService {
       `)
 
       if (rows.length === 0) {
-        throw new Error("Failed to create trigger")
+        throw new Error('Failed to create trigger')
       }
 
-      logger.info("Successfully created new drop trigger")
+      logger.info('Successfully created new drop trigger')
     } catch (error) {
-      logger.error("Error setting up new drop trigger:", error)
+      logger.error('Error setting up new drop trigger:', error)
       throw error
     }
   }
 
-  async startDBListener() {
+  async startDBListener () {
     try {
       if (this.client) {
         await this.client.end()
@@ -80,58 +80,58 @@ class DatabaseListenerService {
         }
       })
 
-      await this.client.connect();
-      await this.client.query("LISTEN new_drop")
+      await this.client.connect()
+      await this.client.query('LISTEN new_drop')
 
-      this.client.on("notification", async (msg) => {
+      this.client.on('notification', async (msg) => {
         try {
-          const payload = JSON.parse(msg.payload);
+          const payload = JSON.parse(msg.payload)
           logger.info(`Received database notification on channel: ${msg.channel}`)
           logger.json(payload)
 
           switch (msg.channel) {
-            case "new_drop":
-              await this.handleNewDrop(payload);
-              break;
+            case 'new_drop':
+              await this.handleNewDrop(payload)
+              break
             default:
-              logger.error("Unknown database notification channel:", msg.channel);
+              logger.error('Unknown database notification channel:', msg.channel)
           }
         } catch (error) {
-          logger.error("Error processing database notification:", error);
+          logger.error('Error processing database notification:', error)
         }
-      });
+      })
 
-      this.client.on("error", (err) => {
-        logger.error("Database connection error:", err)
+      this.client.on('error', (err) => {
+        logger.error('Database connection error:', err)
         this.reconnect()
-      });
+      })
 
-      logger.info("Listening for PostgreSQL notifications...")
+      logger.info('Listening for PostgreSQL notifications...')
     } catch (error) {
-      logger.error("Error starting database listener:", error)
+      logger.error('Error starting database listener:', error)
       this.reconnect()
     }
   }
 
-  async handleNewDrop(payload) {
+  async handleNewDrop (payload) {
     await this.dropService.updateTitleAndDescription({
       dropAddress: payload.drop_address,
-      metadataIpfsHash: payload.metadata_ipfs_hash,
-    });
+      metadataIpfsHash: payload.metadata_ipfs_hash
+    })
     logger.info(`Successfully processed new drop notification for drop address: ${payload.drop_address}`)
   }
 
-  async reconnect() {
+  async reconnect () {
     try {
       if (this.client) {
-        await this.client.end();
+        await this.client.end()
       }
       await new Promise((resolve) => setTimeout(resolve, 5000))
-      await this.startListening();
+      await this.startListening()
     } catch (error) {
-      logger.error("Error reconnecting database listener:", error)
+      logger.error('Error reconnecting database listener:', error)
     }
   }
 }
 
-module.exports = DatabaseListenerService;
+module.exports = DatabaseListenerService

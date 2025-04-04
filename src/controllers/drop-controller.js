@@ -12,7 +12,7 @@ const getAllDrops = async (req, res) => {
   } = req.query
 
   const result = await dropService.getAllActiveDrops({
-    limit, 
+    limit,
     offset,
     staked,
     status,
@@ -44,16 +44,16 @@ const getDropClaimer = async (req, res) => {
   const claimerAddress = req.params.claimer_address
 
   const {
-    account_address, 
-    claimed, 
-    claim_tx_hash
+    account_address,
+    claimed,
+    tx_hash
   } = await claimerService.getClaimer({ dropAddress, claimerAddress })
 
   res.json({
     success: true,
     account_address,
     claimed,
-    claim_tx_hash
+    tx_hash
   })
 }
 

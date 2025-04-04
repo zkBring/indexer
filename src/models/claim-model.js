@@ -5,25 +5,25 @@ class Claim extends Model {}
 Claim.init(
   {
     id: {
-      type: DataTypes.TEXT,
+      type: DataTypes.TEXT
     },
     drop_address: {
       type: DataTypes.TEXT,
-      primaryKey: true,
+      primaryKey: true
     },
     recipient_address: {
       type: DataTypes.TEXT,
-      primaryKey: true,
+      primaryKey: true
     },
     u_hash: {
-      type: DataTypes.TEXT,
+      type: DataTypes.TEXT
     },
     tx_hash: {
-      type: DataTypes.TEXT,
+      type: DataTypes.TEXT
     },
     block_timestamp: {
-      type: DataTypes.DECIMAL,
-    },
+      type: DataTypes.DECIMAL
+    }
   },
   {
     sequelize,
