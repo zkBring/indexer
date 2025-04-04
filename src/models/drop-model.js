@@ -50,6 +50,12 @@ Drop.init(
     total_staked: {
       type: DataTypes.BIGINT,
     },
+    decimals: {
+      type: DataTypes.INTEGER,
+    },
+    symbol: {
+      type: DataTypes.STRING,
+    },
     shadowbanned: {
       type: DataTypes.BOOLEAN,
       defaultValue: false
