@@ -3,7 +3,7 @@ const { dropService } = require('../services/index')
 
 const handleDropStopWebhook = async (req, res) => {
   logger.json({ controller: 'webhook-controller', method: 'handleDropStopWebhook' })
-  const dropAddress = req.body.drop_address 
+  const dropAddress = req.body.drop_address
   await dropService.updateStatus({ dropAddress, status: 'stopped' })
 
   res.status(200).end()
