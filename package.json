@@ -20,6 +20,7 @@
     "express": "^4.18.1",
     "express-async-handler": "^1.2.0",
     "morgan": "^1.10.0",
+    "node-cron": "^3.0.3",
     "pg": "^8.14.1",
     "pg-hstore": "^2.3.4",
     "pinata": "^2.1.3",

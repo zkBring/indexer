@@ -10,9 +10,9 @@ const cookieParser = require('cookie-parser')
 const { isCelebrateError } = require('celebrate')
 const asyncHandler = require('express-async-handler')
 const errorToWarn = require('./configs/error-to-warn.json')
-const { dbListenerService } = require('./src/services')
-const { requestValidator } = require('./src/utils/request-validator')
 const config = require(`./configs/${stageConfig.NODE_ENV}.config`)
+const { requestValidator } = require('./src/utils/request-validator')
+const { dbListenerService, dropExpirationService } = require('./src/services')
 
 app.use(express.urlencoded({
   limit: config.requestSizeLimit,
@@ -39,6 +39,10 @@ sequelize.authenticate()
 
     await dbListenerService.startListening()
     logger.info('Database listener started')
+    
+    if (stageConfig.NODE_ENV === 'production') {
+      dropExpirationService.start()
+    }
 
     const PORT = stageConfig.PORT || 8000
     app.listen(PORT, () => logger.info(`Server is up on port ${PORT}`))
