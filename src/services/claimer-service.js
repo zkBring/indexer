@@ -2,11 +2,11 @@ const { Claim } = require('../models')
 
 class ClaimerService {
   async findByAddress (dropAddress, claimerAddress) {
-    return await Claim.findOne({ 
-      where: { 
-        drop_address: dropAddress.toLowerCase(), 
+    return await Claim.findOne({
+      where: {
+        drop_address: dropAddress.toLowerCase(),
         recipient_address: claimerAddress.toLowerCase()
-      } 
+      }
     })
   }
 
@@ -16,11 +16,11 @@ class ClaimerService {
     if (!claim) {
       result.account_address = claimerAddress.toLowerCase()
       result.claimed = false
-      result.claim_tx_hash = null
+      result.tx_hash = null
     } else {
       result.account_address = claim.recipient_address
       result.claimed = true
-      result.claim_tx_hash = claim.claim_tx_hash
+      result.tx_hash = claim.tx_hash
     }
 
     return result

@@ -3,7 +3,7 @@ const stageConfig = require('../../stage-config')
 const logger = require('../utils/logger')
 
 class IpfsService {
-  constructor() {
+  constructor () {
     this.pinata = new PinataSDK({
       pinataJwt: stageConfig.PINATA_JWT,
       pinataGateway: stageConfig.PINATA_GATEWAY,
@@ -26,7 +26,7 @@ class IpfsService {
     try {
       const result = await this.pinata.gateways.public.get(metadataIpfsHash)
       return result.data
-    } catch (err) { 
+    } catch (err) {
       logger.error(err)
       throw err
     }

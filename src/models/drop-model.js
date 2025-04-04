@@ -5,56 +5,56 @@ class Drop extends Model {}
 Drop.init(
   {
     id: {
-      type: DataTypes.TEXT,
+      type: DataTypes.TEXT
     },
     drop_address: {
       type: DataTypes.TEXT,
       primaryKey: true
     },
     factory_address: {
-      type: DataTypes.TEXT,
+      type: DataTypes.TEXT
     },
     token_address: {
-      type: DataTypes.TEXT,
+      type: DataTypes.TEXT
     },
     creator_address: {
-      type: DataTypes.TEXT,
+      type: DataTypes.TEXT
     },
     zk_pass_schema_id: {
-      type: DataTypes.TEXT,
+      type: DataTypes.TEXT
     },
     amount: {
-      type: DataTypes.DECIMAL,
+      type: DataTypes.DECIMAL
     },
     expiration: {
-      type: DataTypes.DECIMAL,
+      type: DataTypes.DECIMAL
     },
     max_claims: {
-      type: DataTypes.DECIMAL,
+      type: DataTypes.DECIMAL
     },
     metadata_ipfs_hash: {
-      type: DataTypes.TEXT,
+      type: DataTypes.TEXT
     },
     status: {
-      type: DataTypes.TEXT,
+      type: DataTypes.TEXT
     },
     block_timestamp: {
-      type: DataTypes.DECIMAL,
+      type: DataTypes.DECIMAL
     },
     title: {
-      type: DataTypes.TEXT,
+      type: DataTypes.TEXT
     },
     description: {
-      type: DataTypes.TEXT,
+      type: DataTypes.TEXT
     },
     total_staked: {
-      type: DataTypes.DECIMAL,
+      type: DataTypes.DECIMAL
     },
     decimals: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER
     },
     symbol: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING
     },
     shadowbanned: {
       type: DataTypes.BOOLEAN,

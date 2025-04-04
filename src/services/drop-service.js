@@ -11,12 +11,14 @@ class DropService {
   async findDropWithClaim (dropAddress, claimerAddress) {
     return await Drop.findOne({
       where: { drop_address: dropAddress, shadowbanned: false },
-      include: claimerAddress ? [{
-        model: Claim,
-        required: false,
-        attributes: ['recipient_address', 'tx_hash'],
-        where: { recipient_address: claimerAddress.toLowerCase() }
-      }] : []
+      include: claimerAddress
+        ? [{
+            model: Claim,
+            required: false,
+            attributes: ['recipient_address', 'tx_hash'],
+            where: { recipient_address: claimerAddress.toLowerCase() }
+          }]
+        : []
     })
   }
 
@@ -30,7 +32,7 @@ class DropService {
     })
     drop.claims_count = claimsCount
 
-    if (fetcherAddress) {      
+    if (fetcherAddress) {
       if (drop.Claims && drop.Claims.length > 0) {
         const claim = drop.Claims[0]
         drop.fetcher_data = {
@@ -47,27 +49,23 @@ class DropService {
       }
       delete drop.Claims
     }
-    
+
     return drop
   }
 
-  async getAllActiveDrops({
+  async getAllActiveDrops ({
     limit,
     offset,
+    staked,
+    status,
     creatorAddress
   }) {
     offset = Number(offset) || 0
     limit = Number(limit) || 10
-    
-    const whereCondition = { status: 'active', shadowbanned: false }
-    if (creatorAddress) {
-      whereCondition.creator_address = creatorAddress.toLowerCase()
-    } else {
-      const minimumStakedInWei = ethers.parseUnits(
-        stageConfig.MINIMUM_STAKED_BRING, 18).toString()
-      whereCondition.total_staked = { [Op.gte]: minimumStakedInWei }
-    }
-    
+
+    const whereCondition = this
+      ._buildWhereCondition({ status, creatorAddress, staked })
+
     const total = await Drop.count({
       where: whereCondition
     })
@@ -77,10 +75,10 @@ class DropService {
       attributes: {
         include: [
           [
-            sequelize.fn('COUNT', 
+            sequelize.fn('COUNT',
               sequelize.where(
-                sequelize.col('Claims.drop_address'), 
-                '=', 
+                sequelize.col('Claims.drop_address'),
+                '=',
                 sequelize.col('Drop.drop_address')
               )
             ),
@@ -106,7 +104,7 @@ class DropService {
       offset,
       limit
     })
-    
+
     return {
       drops,
       resultSet: {
@@ -117,12 +115,26 @@ class DropService {
     }
   }
 
-  async updateDrop({ 
-    title, 
-    status, 
-    dropAddress, 
-    description, 
-    totalStaked 
+  _buildWhereCondition ({ status, creatorAddress, staked }) {
+    const whereCondition = { shadowbanned: false }
+
+    if (status) whereCondition.status = status
+    if (creatorAddress) whereCondition.creator_address = creatorAddress.toLowerCase()
+    if (staked) {
+      const minimumStakedInWei = ethers.parseUnits(
+        stageConfig.MINIMUM_STAKED_BRING, 18).toString()
+      whereCondition.total_staked = { [Op.gte]: minimumStakedInWei }
+    }
+
+    return whereCondition
+  }
+
+  async updateDrop ({
+    title,
+    status,
+    dropAddress,
+    description,
+    totalStaked
   }) {
     const params = {
       title,
@@ -139,18 +151,18 @@ class DropService {
     return drop
   }
 
-  async updateStatus({ dropAddress, status }) {
+  async updateStatus ({ dropAddress, status }) {
     return await this.updateDrop({ dropAddress, status })
   }
 
-  async updateTotalStaked({ dropAddress, totalStaked }) {
+  async updateTotalStaked ({ dropAddress, totalStaked }) {
     return await this.updateDrop({ dropAddress, totalStaked })
   }
 
-  async updateTitleAndDescription({ dropAddress, metadataIpfsHash }) {
-    const { 
-      title, 
-      description 
+  async updateTitleAndDescription ({ dropAddress, metadataIpfsHash }) {
+    const {
+      title,
+      description
     } = await this.ipfsService.getDropTitleAndDescription(metadataIpfsHash)
     return await this.updateDrop({ dropAddress, title, description })
   }
