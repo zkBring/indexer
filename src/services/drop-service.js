@@ -1,3 +1,6 @@
+const { Op } = require('sequelize')
+const { ethers } = require('ethers')
+const stageConfig = require('../../stage-config')
 const { Drop, Claim, sequelize } = require('../models')
 
 class DropService {
@@ -59,6 +62,10 @@ class DropService {
     const whereCondition = { status: 'active', shadowbanned: false }
     if (creatorAddress) {
       whereCondition.creator_address = creatorAddress.toLowerCase()
+    } else {
+      const minimumStakedInWei = ethers.parseUnits(
+        stageConfig.MINIMUM_STAKED_BRING, 18).toString()
+      whereCondition.total_staked = { [Op.gte]: minimumStakedInWei }
     }
     
     const total = await Drop.count({
