@@ -8,14 +8,12 @@ class DropService {
   async findDropWithClaim (dropAddress, claimerAddress) {
     return await Drop.findOne({
       where: { drop_address: dropAddress, shadowbanned: false },
-      include: [
-        {
-          model: Claim,
-          required: false,
-          attributes: ['recipient_address', 'claim_tx_hash'],
-          where: claimerAddress ? { recipient_address: claimerAddress.toLowerCase() } : {}
-        }
-      ]
+      include: claimerAddress ? [{
+        model: Claim,
+        required: false,
+        attributes: ['recipient_address', 'tx_hash'],
+        where: { recipient_address: claimerAddress.toLowerCase() }
+      }] : []
     })
   }
 
@@ -35,13 +33,13 @@ class DropService {
         drop.fetcher_data = {
           account_address: claim.recipient_address,
           claimed: true,
-          claim_tx_hash: claim.claim_tx_hash
+          tx_hash: claim.tx_hash
         }
       } else {
         drop.fetcher_data = {
           account_address: fetcherAddress.toLowerCase(),
           claimed: false,
-          claim_tx_hash: null
+          tx_hash: null
         }
       }
       delete drop.Claims
