@@ -15,7 +15,7 @@ class DropService {
         ? [{
             model: Claim,
             required: false,
-            attributes: ['recipient_address', 'tx_hash'],
+            attributes: ['recipient_address', 'claim_tx_hash'],
             where: { recipient_address: claimerAddress.toLowerCase() }
           }]
         : []
@@ -38,13 +38,13 @@ class DropService {
         drop.fetcher_data = {
           account_address: claim.recipient_address,
           claimed: true,
-          tx_hash: claim.tx_hash
+          claim_tx_hash: claim.claim_tx_hash
         }
       } else {
         drop.fetcher_data = {
           account_address: fetcherAddress.toLowerCase(),
           claimed: false,
-          tx_hash: null
+          claim_tx_hash: null
         }
       }
       delete drop.Claims
