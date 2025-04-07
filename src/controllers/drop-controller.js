@@ -46,14 +46,14 @@ const getDropClaimer = async (req, res) => {
   const {
     account_address,
     claimed,
-    tx_hash
+    claim_tx_hash
   } = await claimerService.getClaimer({ dropAddress, claimerAddress })
 
   res.json({
     success: true,
     account_address,
     claimed,
-    tx_hash
+    claim_tx_hash
   })
 }
 

@@ -18,7 +18,7 @@ Claim.init(
     u_hash: {
       type: DataTypes.TEXT
     },
-    tx_hash: {
+    claim_tx_hash: {
       type: DataTypes.TEXT
     },
     block_timestamp: {

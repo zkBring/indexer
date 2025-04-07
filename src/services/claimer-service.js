@@ -16,11 +16,11 @@ class ClaimerService {
     if (!claim) {
       result.account_address = claimerAddress.toLowerCase()
       result.claimed = false
-      result.tx_hash = null
+      result.claim_tx_hash = null
     } else {
       result.account_address = claim.recipient_address
       result.claimed = true
-      result.tx_hash = claim.tx_hash
+      result.claim_tx_hash = claim.claim_tx_hash
     }
 
     return result
