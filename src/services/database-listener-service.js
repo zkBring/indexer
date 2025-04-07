@@ -21,6 +21,7 @@ class DatabaseListenerService {
 
   async setupTriggers () {
     await this.setupNewDropTrigger()
+    await this.setupNewClaimTrigger()
   }
 
   async setupNewDropTrigger () {
@@ -67,6 +68,49 @@ class DatabaseListenerService {
     }
   }
 
+  async setupNewClaimTrigger () {
+    try {
+      await sequelize.query(`
+        CREATE OR REPLACE FUNCTION events.notify_new_claim()
+        RETURNS trigger AS $$
+        BEGIN
+          PERFORM pg_notify(
+            'new_claim',
+            json_build_object(
+              'drop_address', NEW.drop_address
+            )::text
+          );
+          RETURN NEW;
+        END;
+        $$ LANGUAGE plpgsql;
+      `)
+
+      await sequelize.query(`
+        DROP TRIGGER IF EXISTS claim_notify_trigger ON events.claims;
+        CREATE TRIGGER claim_notify_trigger
+          AFTER INSERT ON events.claims
+          FOR EACH ROW
+          EXECUTE FUNCTION events.notify_new_claim();
+      `)
+
+      const [rows] = await sequelize.query(`
+        SELECT 1 
+        FROM pg_trigger 
+        WHERE tgname = 'claim_notify_trigger' 
+        AND tgrelid = 'events.claims'::regclass
+      `)
+
+      if (rows.length === 0) {
+        throw new Error('Failed to create claim trigger')
+      }
+
+      logger.info('Successfully created new claim trigger')
+    } catch (error) {
+      logger.error('Error setting up new claim trigger:', error)
+      throw error
+    }
+  }
+
   async startDBListener () {
     try {
       if (this.client) {
@@ -82,6 +126,7 @@ class DatabaseListenerService {
 
       await this.client.connect()
       await this.client.query('LISTEN new_drop')
+      await this.client.query('LISTEN new_claim')
 
       this.client.on('notification', async (msg) => {
         try {
@@ -92,6 +137,9 @@ class DatabaseListenerService {
           switch (msg.channel) {
             case 'new_drop':
               await this.handleNewDrop(payload)
+              break
+            case 'new_claim':
+              await this.handleNewClaim(payload)
               break
             default:
               logger.error('Unknown database notification channel:', msg.channel)
@@ -119,6 +167,13 @@ class DatabaseListenerService {
       metadataIpfsHash: payload.metadata_ipfs_hash
     })
     logger.info(`Successfully processed new drop notification for drop address: ${payload.drop_address}`)
+  }
+
+  async handleNewClaim (payload) {
+    await this.dropService.updateDropStatusOnMaxClaimsReached({ 
+      dropAddress: payload.drop_address 
+    })
+    logger.info(`Successfully processed new claim notification for drop address: ${payload.drop_address}`)
   }
 
   async reconnect () {
