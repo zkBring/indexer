@@ -2,6 +2,7 @@ const { Op } = require('sequelize')
 const { ethers } = require('ethers')
 const stageConfig = require('../../stage-config')
 const { Drop, Claim, sequelize } = require('../models')
+const logger = require('../utils/logger')
 
 class DropService {
   constructor (ipfsService) {
@@ -165,6 +166,30 @@ class DropService {
       description
     } = await this.ipfsService.getDropTitleAndDescription(metadataIpfsHash)
     return await this.updateDrop({ dropAddress, title, description })
+  }
+
+  async updateDropStatusOnMaxClaimsReached ({ dropAddress }) {
+    const drop = await Drop.findOne({
+      where: { drop_address: dropAddress.toLowerCase() },
+      attributes: ['drop_address', 'max_claims', 'status']
+    })
+
+    if (!drop) {
+      logger.warn(`Drop not found for address: ${dropAddress}`)
+      return
+    }
+
+    const currentClaimsCount = await Claim.count({
+      where: { drop_address: dropAddress.toLowerCase() }
+    })
+
+    if (currentClaimsCount >= drop.max_claims) {
+      await this.updateStatus({
+        dropAddress: dropAddress.toLowerCase(),
+        status: 'finished'
+      })
+      logger.info(`Drop ${dropAddress} marked as finished. Claims: ${currentClaimsCount}/${drop.max_claims}`)
+    }
   }
 }
 
