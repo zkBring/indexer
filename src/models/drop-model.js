@@ -56,6 +56,10 @@ Drop.init(
     symbol: {
       type: DataTypes.STRING
     },
+    listed: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
     shadowbanned: {
       type: DataTypes.BOOLEAN,
       defaultValue: false

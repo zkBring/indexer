@@ -59,13 +59,14 @@ class DropService {
     offset,
     staked,
     status,
+    listed,
     creatorAddress
   }) {
     offset = Number(offset) || 0
     limit = Number(limit) || 10
 
     const whereCondition = this
-      ._buildWhereCondition({ status, creatorAddress, staked })
+      ._buildWhereCondition({ status, creatorAddress, staked, listed })
 
     const total = await Drop.count({
       where: whereCondition
@@ -116,17 +117,20 @@ class DropService {
     }
   }
 
-  _buildWhereCondition ({ status, creatorAddress, staked }) {
+  _buildWhereCondition ({ status, creatorAddress, staked, listed }) {
     const whereCondition = { shadowbanned: false }
 
     if (status) whereCondition.status = status
     if (creatorAddress) whereCondition.creator_address = creatorAddress.toLowerCase()
+    if (listed) whereCondition.listed = listed
+    
     if (staked) {
       const minimumStakedInWei = ethers.parseUnits(
         stageConfig.MINIMUM_STAKED_BRING, 18).toString()
       whereCondition.total_staked = { [Op.gte]: minimumStakedInWei }
     }
 
+    if (listed) whereCondition.listed = listed
     return whereCondition
   }
 
