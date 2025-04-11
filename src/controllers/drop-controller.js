@@ -8,6 +8,7 @@ const getAllDrops = async (req, res) => {
     offset,
     staked,
     status,
+    listed,
     creator_address: creatorAddress
   } = req.query
 
@@ -16,6 +17,7 @@ const getAllDrops = async (req, res) => {
     offset,
     staked,
     status,
+    listed,
     creatorAddress
   })
 

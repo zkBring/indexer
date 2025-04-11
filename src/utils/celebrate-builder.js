@@ -17,6 +17,9 @@ const celebrateMiddleware = celebrateSchema => {
         staked: Joi.boolean().optional().messages({
           'boolean.base': 'STAKED_WRONG_TYPE'
         }),
+        listed: Joi.boolean().optional().messages({
+          'boolean.base': 'LISTED_WRONG_TYPE'
+        }),
         status: Joi.string().optional().valid('active', 'finished', 'stopped', 'expired').messages({
           'string.base': 'STATUS_WRONG_TYPE',
           'string.empty': 'STATUS_EMPTY'
